@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database with pgvector extension for AI Semantic Search
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: cambodia_market_postgres
+    environment:
+      POSTGRES_DB: market_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. RabbitMQ Message Broker for decoupled Scraping Ingestion & Spring Boot ETL
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: cambodia_market_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"   # AMQP protocol port
+      - "15672:15672" # Management Web UI port
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

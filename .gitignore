@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+*.log
+venv/
+.venv/
+dist/
+
+# Node / Frontend
+node_modules/
+.DS_Store
+*.local
+frontend/dist/
+
+# Java / Maven
+backend/target/
+*.class
+*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Misc
+.agent/
+scratch/*.json
+scratch/*.txt
